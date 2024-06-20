@@ -26,13 +26,14 @@ public class Event {
 
     private LocalDateTime dateTime;
 
+    @Column(name = "availableSlots")
     private int availableSlots;
 
     private boolean isPaid;
 
     private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE, targetEntity = User.class)
     @JoinColumn(name = "organizer_id")
     private User organizer;
 

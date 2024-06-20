@@ -21,10 +21,8 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    @Transactional
-    public UserDto createUser(UserDto userDto) {
-        User user = userMapper.toEntity(userDto);
-        return userMapper.toDto(userRepository.save(user));
+    public UserDto createUser(User userDto) {
+        return userMapper.toDto(userRepository.save(userDto));
     }
     @Cacheable("users")
     public UserDto findUserByEmail(String email) {

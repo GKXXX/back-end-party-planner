@@ -1,6 +1,7 @@
 package com.example.party_planner.controller;
 
 import com.example.party_planner.dto.UserDto;
+import com.example.party_planner.mapper.UserMapper;
 import com.example.party_planner.security.AuthRequest;
 import com.example.party_planner.service.JwtService;
 import com.example.party_planner.service.UserService;
@@ -19,19 +20,22 @@ public class AuthentificationController {
     private UserService userService;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private JwtService jwtService;
 
     @PostMapping(value = "/register")
     public ResponseEntity<String> register(@RequestBody UserDto userDto) {
-        userService.createUser(userDto);
+        userService.createUser(userMapper.toEntity(userDto));
         return ResponseEntity.ok().body("Done.");
     }
 
     @PostMapping(value = "/connect")
     public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {
         UserDto user = userService.findUserByEmail(authRequest.username());
-
-        if (user != null) {
+        System.out.println(user.toString());
+        if (user.getEmail() != null) {
             if (user.getPassword().equals(authRequest.password())) {
                 return ResponseEntity.ok().body(jwtService.generateToken(user));
             } else {
