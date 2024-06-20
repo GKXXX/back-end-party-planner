@@ -5,6 +5,8 @@ import com.example.party_planner.entity.Comment;
 import com.example.party_planner.mapper.CommentMapper;
 import com.example.party_planner.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class CommentService {
         return commentMapper.toDto(commentRepository.save(comment));
     }
 
-    public List<CommentDto> findAllComments() {
-        return commentMapper.toDtos(commentRepository.findAll());
+    public Page<CommentDto> findAllComments(Pageable pageable) {
+        return commentRepository.findAll(pageable).map(commentMapper::toDto);
     }
 
     public CommentDto findCommentById(Long id) {

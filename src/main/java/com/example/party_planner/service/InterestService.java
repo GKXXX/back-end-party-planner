@@ -1,13 +1,12 @@
 package com.example.party_planner.service;
-
 import com.example.party_planner.dto.InterestDto;
 import com.example.party_planner.entity.Interest;
 import com.example.party_planner.mapper.InterestMapper;
 import com.example.party_planner.repository.InterestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +19,8 @@ public class InterestService {
         return interestMapper.toDto(interestRepository.save(interest));
     }
 
-    public List<InterestDto> findAllInterests() {
-        return interestMapper.toDtos(interestRepository.findAll());
+    public Page<InterestDto> findAllInterests(Pageable pageable) {
+        return interestRepository.findAll(pageable).map(interestMapper::toDto);
     }
 
     public InterestDto findInterestById(Long id) {

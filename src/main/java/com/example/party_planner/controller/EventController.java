@@ -3,15 +3,18 @@ package com.example.party_planner.controller;
 import com.example.party_planner.dto.EventDto;
 import com.example.party_planner.service.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventController {
+    @Autowired
     private final EventService eventService;
 
     @PostMapping
@@ -19,14 +22,26 @@ public class EventController {
         return ResponseEntity.ok(eventService.createEvent(eventDto));
     }
 
-    @GetMapping
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        return ResponseEntity.ok(eventService.findAllEvents());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.findEventById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<EventDto>> getAllEvents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(eventService.findAllEvents(pageable));
+    }
+
+    @GetMapping("/paid")
+    public ResponseEntity<Page<EventDto>> getEventsByIsPaid(
+            @RequestParam Boolean isPaid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(eventService.findEventsByIsPaid(isPaid, pageable));
     }
 
     @PutMapping("/{id}")
@@ -39,12 +54,5 @@ public class EventController {
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<EventDto>> searchEvents(@RequestParam(required = false) String location,
-                                                       @RequestParam(required = false) String type,
-                                                       @RequestParam(required = false) Boolean isPaid) {
-        return ResponseEntity.ok(eventService.searchEvents(location, type, isPaid));
     }
 }
