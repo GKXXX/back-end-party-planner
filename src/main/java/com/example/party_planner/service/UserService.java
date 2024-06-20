@@ -4,8 +4,11 @@ import com.example.party_planner.dto.UserDto;
 import com.example.party_planner.entity.User;
 import com.example.party_planner.mapper.UserMapper;
 import com.example.party_planner.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +21,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    @Transactional
+    public UserDto createUser(UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
+        return userMapper.toDto(userRepository.save(user));
     }
-
+    @Cacheable("users")
     public UserDto findUserByEmail(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             return userMapper.toDto(userRepository.findByEmail(email).get());
@@ -30,23 +35,22 @@ public class UserService {
         }
 
     }
-
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    @Cacheable("users")
+    public List<UserDto> findAllUsers() {
+        return userMapper.toDtos(userRepository.findAll());
     }
 
-    public User findUserById(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            return userRepository.findById(id).get();
-        } else {
-            return null;
-        }
+    public UserDto findUserById(Long id) {
+        return userMapper.toDto(userRepository.findById(id).orElse(null));
     }
-
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    @CacheEvict(value = "users", allEntries = true)
+    @Transactional
+    public UserDto updateUser(UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
+        return userMapper.toDto(userRepository.save(user));
     }
-
+    @CacheEvict(value = "users", allEntries = true)
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

@@ -1,40 +1,51 @@
 package com.example.party_planner.service;
 
+import com.example.party_planner.dto.EventDto;
 import com.example.party_planner.entity.Event;
+import com.example.party_planner.mapper.EventMapper;
 import com.example.party_planner.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
     private final EventRepository eventRepository;
+    private final EventMapper eventMapper;
 
-    public Event createEvent(Event event) {
-        return eventRepository.save(event);
+    public EventDto createEvent(EventDto eventDto) {
+        Event event = eventMapper.toEntity(eventDto);
+        return eventMapper.toDto(eventRepository.save(event));
     }
 
-    public List<Event> findAllEvents() {
-        return eventRepository.findAll();
+    public List<EventDto> findAllEvents() {
+        return eventMapper.toDtos(eventRepository.findAll());
     }
 
-    public Optional<Event> findEventById(Long id) {
-        return eventRepository.findById(id);
+    public EventDto findEventById(Long id) {
+        return eventMapper.toDto(eventRepository.findById(id).orElse(null));
     }
 
-    public Event updateEvent(Event event) {
-        return eventRepository.save(event);
+    public EventDto updateEvent(EventDto eventDto) {
+        Event event = eventMapper.toEntity(eventDto);
+        return eventMapper.toDto(eventRepository.save(event));
     }
 
     public void deleteEvent(Long id) {
         eventRepository.deleteById(id);
     }
 
-    public List<Event> searchEvents(String location, String type, Boolean isPaid) {
-        // Add your custom search logic here, e.g., using custom repository methods
-        return eventRepository.findAll(); // Placeholder
+    public List<EventDto> searchEvents(String location, String type, Boolean isPaid) {
+        if (location != null) {
+            return eventMapper.toDtos(eventRepository.findByLocation(location));
+        } else if (type != null) {
+            return eventMapper.toDtos(eventRepository.findByType(type));
+        } else if (isPaid != null) {
+            return eventMapper.toDtos(eventRepository.findByIsPaid(isPaid));
+        } else {
+            return eventMapper.toDtos(eventRepository.findAll());
+        }
     }
 }
