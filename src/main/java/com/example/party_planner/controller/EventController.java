@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
@@ -55,13 +57,15 @@ public class EventController {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
-}
+
 
     @GetMapping("/search")
-    public ResponseEntity<List<EventDto>> searchEvents(@RequestParam(required = false) String location,
-                                                       @RequestParam(required = false) String type,
-                                                       @RequestParam(required = false) Boolean isPaid) {
-        return ResponseEntity.ok(eventService.searchEvents(location, type, isPaid));
+    public ResponseEntity<Page<EventDto>> searchEvents(@RequestParam(required = false) String location,
+                                                       @RequestParam(required = false) Long id_interest,
+                                                       @RequestParam(required = false) Boolean isPaid,
+                                                       @RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return ResponseEntity.ok(eventService.searchEvents(pageable,location, id_interest, isPaid));
 
     }
 }

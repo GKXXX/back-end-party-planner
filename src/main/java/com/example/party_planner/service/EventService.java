@@ -3,13 +3,19 @@ package com.example.party_planner.service;
 import com.example.party_planner.dto.EventDto;
 import com.example.party_planner.entity.Event;
 import com.example.party_planner.mapper.EventMapper;
+import com.example.party_planner.mapper.UserMapper;
 import com.example.party_planner.repository.EventRepository;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.databind.util.Converter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -19,14 +25,17 @@ public class EventService {
     private EventRepository eventRepository;
     @Autowired
     private EventMapper eventMapper;
+    @Autowired
+    private UserMapper userMapper;
+
 
     public EventDto createEvent(EventDto eventDto) {
         Event event = eventMapper.toEntity(eventDto);
         return eventMapper.toDto(eventRepository.save(event));
     }
 
-    public List<EventDto> findByCity(String city) {
-        return eventMapper.toDtos(eventRepository.findByLocation(city));
+    public Page<EventDto> findByCity(Pageable pageable,String city) {
+        return eventRepository.findByLocation(city,pageable).map(eventMapper::toDto);
     }
 
     public List<EventDto> findAllEvents() {
@@ -54,15 +63,15 @@ public class EventService {
         eventRepository.deleteById(id);
     }
 
-    public List<EventDto> searchEvents(String location, Long id_interest, Boolean isPaid) {
+    public Page<EventDto> searchEvents(Pageable pageable,String location, Long id_interest, Boolean isPaid) {
         if (location != null) {
-            return eventMapper.toDtos(eventRepository.findByLocation(location));
+            return eventRepository.findByLocation(location,pageable).map(eventMapper::toDto);
         } else if (id_interest != null) {
-            return eventMapper.toDtos(eventRepository.findByInterest(id_interest));
+            return eventRepository.findByInterest(id_interest,pageable).map(eventMapper::toDto);
         } else if (isPaid != null) {
-            return eventMapper.toDtos(eventRepository.findByIsPaid(isPaid));
+            return eventRepository.findByIsPaid(isPaid,pageable).map(eventMapper::toDto);
         } else {
-            return eventMapper.toDtos(eventRepository.findAll());
+            return eventRepository.findAll(pageable).map(eventMapper::toDto);
         }
     }
 }
