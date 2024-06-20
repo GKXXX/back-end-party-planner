@@ -1,7 +1,10 @@
 package com.example.party_planner.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Entity
@@ -10,7 +13,7 @@ import java.util.List;
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_city", columnList = "city")
 })
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
