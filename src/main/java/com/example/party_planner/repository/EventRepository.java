@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByLocation(String location);
-    List<Event> findByType(String type);
+    List<Event> findByInterest(Long id_interest);
     List<Event> findByIsPaid(Boolean isPaid);
 }

@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Data
-@Table(name = "events")
+@Table(name = "events",indexes = {@Index(name = "index_event_location",columnList = "location"),
+        @Index(name = "index_event_interest",columnList = "interest_id"),
+@Index(name = "index_event_city",columnList = "is_paid")})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
@@ -22,7 +25,6 @@ public class Event {
 
     private String location;
 
-    private String type;
 
     private LocalDateTime dateTime;
 
@@ -37,11 +39,16 @@ public class Event {
     @JoinColumn(name = "organizer_id")
     private User organizer;
 
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST,targetEntity = Interest.class)
+    @JoinColumn(name = "interest_id")
+    private Interest interest;
+
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_event",
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @BatchSize(size = 10)
     private List<User> participants;
 
     @ElementCollection

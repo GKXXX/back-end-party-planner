@@ -82,9 +82,14 @@ public class EventController {
 
     @GetMapping("/search")
     public ResponseEntity<List<EventDto>> searchEvents(@RequestParam(required = false) String location,
-                                                       @RequestParam(required = false) String type,
+                                                       @RequestParam(required = false) Long id_interest,
                                                        @RequestParam(required = false) Boolean isPaid) {
-        return ResponseEntity.ok(eventService.searchEvents(location, type, isPaid));
+        return ResponseEntity.ok(eventService.searchEvents(location, id_interest, isPaid));
 
+    }
+
+    @GetMapping("/searchByCity")
+    public ResponseEntity<List<EventDto>> searchByCity(@RequestParam(required = true)String city) {
+        return ResponseEntity.ok(eventService.)
     }
 }
