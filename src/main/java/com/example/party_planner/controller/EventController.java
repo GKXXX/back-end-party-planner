@@ -56,3 +56,12 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EventDto>> searchEvents(@RequestParam(required = false) String location,
+                                                       @RequestParam(required = false) String type,
+                                                       @RequestParam(required = false) Boolean isPaid) {
+        return ResponseEntity.ok(eventService.searchEvents(location, type, isPaid));
+
+    }
+}

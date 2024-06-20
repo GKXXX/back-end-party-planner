@@ -4,16 +4,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
 @Entity
-@Data
 @Table(name = "users", indexes = {
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_city", columnList = "city")
 })
-
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -34,9 +34,20 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "interest_id"))
     private List<Interest> interests;
 
+
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @BatchSize(size = 10)
     private List<Comment> comments;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_event",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @BatchSize(size = 10)
+    private List<Event> events;
+
+
     @OneToMany(mappedBy = "reviewer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @BatchSize(size = 10)
     private List<Rating> ratings;
 }

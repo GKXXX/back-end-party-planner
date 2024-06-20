@@ -25,6 +25,14 @@ public class EventService {
         return eventMapper.toDto(eventRepository.save(event));
     }
 
+    public List<EventDto> findByCity(String city) {
+        return eventMapper.toDtos(eventRepository.findByLocation(city));
+    }
+
+    public List<EventDto> findAllEvents() {
+        return eventMapper.toDtos(eventRepository.findAll());
+    }
+
     public EventDto findEventById(Long id) {
         return eventMapper.toDto(eventRepository.findById(id).orElse(null));
     }
@@ -44,5 +52,17 @@ public class EventService {
 
     public void deleteEvent(Long id) {
         eventRepository.deleteById(id);
+    }
+
+    public List<EventDto> searchEvents(String location, Long id_interest, Boolean isPaid) {
+        if (location != null) {
+            return eventMapper.toDtos(eventRepository.findByLocation(location));
+        } else if (id_interest != null) {
+            return eventMapper.toDtos(eventRepository.findByInterest(id_interest));
+        } else if (isPaid != null) {
+            return eventMapper.toDtos(eventRepository.findByIsPaid(isPaid));
+        } else {
+            return eventMapper.toDtos(eventRepository.findAll());
+        }
     }
 }
