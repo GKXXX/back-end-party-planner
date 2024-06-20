@@ -10,6 +10,9 @@ import java.util.List;
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_city", columnList = "city")
 })
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

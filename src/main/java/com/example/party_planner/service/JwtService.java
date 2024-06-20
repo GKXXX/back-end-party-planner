@@ -14,14 +14,14 @@ public class JwtService {
 
     public String generateToken(UserDto user) {
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 864_000_000)) // 10 jours
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getIdFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)

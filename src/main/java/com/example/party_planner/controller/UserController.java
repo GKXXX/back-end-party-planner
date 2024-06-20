@@ -19,10 +19,6 @@ public class UserController {
     @Autowired
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.createUser(userDto));
-    }
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
