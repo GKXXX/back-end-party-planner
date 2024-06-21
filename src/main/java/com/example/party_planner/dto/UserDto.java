@@ -11,7 +11,6 @@ public class UserDto {
     private Long id;
     private String email;
     private String password;
-    private String region;
     private String city;
     private int age;
     private List<InterestDto> interests = new ArrayList<>();
