@@ -1,5 +1,6 @@
 package com.example.party_planner.dto;
 
+import com.example.party_planner.entity.Event;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -16,4 +17,5 @@ public class UserDto {
     private List<InterestDto> interests = new ArrayList<>();
     private List<CommentDto> comments = new ArrayList<>();
     private List<RatingDto> ratings = new ArrayList<>();
+    private List<EventDto> events = new ArrayList<>();
 }
